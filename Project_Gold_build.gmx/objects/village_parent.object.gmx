@@ -286,8 +286,29 @@ if s_income = true {
 else {
     
     if income_gold = true {
-        draw_sprite(coin_spr,0,x,y);
-        effect_create_above(ef_firework,x - 20,y - 20,0.0001,c_yellow);    
+        x_scale = 1;
+        y_scale = 1;
+        up = true;
+        
+            if up = true {
+                if x_scale &amp;&amp; y_scale &lt; 3 {
+                    x_scale += 0.1
+                    y_scale += 0.1
+                }
+                else {
+                    up = false;
+                }
+            }
+            else {
+                if x_scale &amp;&amp; y_scale &gt; 1 {
+                    x_scale -= 0.1
+                    y_scale -= 0.1
+                }
+                else {
+                    up = true;
+                }
+            }
+        draw_sprite_ext(coin_spr,0,x,y,x_scale,y_scale,0,c_white,1);    
     }
 }
 </string>

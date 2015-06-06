@@ -26,10 +26,7 @@
           <argument>
             <kind>1</kind>
             <string>global.g_mine += 1;
-//global.rage_mine[global.g_mine] = instance_id;
-
 defenders = 0;
-mySoldiers = 0;
 defenders_hp = defenders * global.s_hp;
 gold = global.gold_max;
 

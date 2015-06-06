@@ -27,7 +27,6 @@
             <kind>1</kind>
             <string>hp = global.s_hp;
 speed = global.s_speed;
-global.s_unit += 1;
 atk = true;
 obj_type = "player_unit";
 myGoblin = false;
@@ -41,10 +40,18 @@ y_finish = global.y_finish;
 direction = point_direction(x,y,x_finish,y_finish);
 my_target = instance_position(x_finish,y_finish,all);
 move_towards_point(my_target.x,my_target.y,speed);
-//dir = 0;
 
 if global.s_free &gt; 0 { 
     global.s_free -= 1;
+}
+
+if !my_target.obj_type = "goldmine" {
+    global.soldiers += 1;
+}
+else {
+    if my_target.have_mine = false {
+        global.soldiers +=1;
+    }
 }
 </string>
           </argument>
@@ -124,14 +131,10 @@ if my_target.obj_type = "goldmine" {
         
         if my_target.goblins_amount &gt; 0 {
             my_target.goblins_amount -= 1;
+            global.soldiers -= 1;
         }
         else {
-            global.mySoldiers += 1;
-            
-            if my_target.defenders &lt; 3 {
-                my_target.defenders += 1;
-            }
-            else {
+            if my_target.defenders &gt;= 3 {
                 my_target = base_obj;
                 speed = global.s_speed;
                 move_towards_point(my_target.x,my_target.y,speed);

@@ -429,7 +429,7 @@ if global.base = false {
     global.village_spawn = room_speed * (71 - random(13) + random(21));
 }
 else {
-    global.village_spawn = room_speed * (71 * (sqrt(power(global.village,1.7))) - random(13) + random(21));
+    global.village_spawn = room_speed * (35 * (sqrt(power(global.village,1.7))) - random(13) + random(21));
 }
 
 
@@ -442,7 +442,7 @@ if global.gold &gt;= gold_to_win {
 
 if instance_exists(goldmine_obj) {
     global.miner = global.miner_free + instance_number(miner_obj);
-    global.s_unit = global.s_free + global.mySoldiers + instance_number(soldier_obj) + instance_number(soldier_village);
+    global.s_unit = global.s_free + goldmine_obj.defenders + global.soldiers;
 }
 </string>
           </argument>
@@ -514,7 +514,7 @@ global.s_maxatk = 23;
 global.s_hp = 130;
 global.s_unit = 2;
 global.s_free = 2;
-global.mySoldiers = 0;
+global.soldiers = 0;
 global.s_speed = 2.93;
 global.soldier_price = 44;
 
