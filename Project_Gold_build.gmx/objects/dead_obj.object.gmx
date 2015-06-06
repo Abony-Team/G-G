@@ -137,7 +137,7 @@ myText = true;
             <string>draw_set_alpha(1);
 draw_set_font(small_pf);
 draw_set_halign(fa_center);
-draw_set_color(make_colour_rgb(32,32,32));
+draw_set_color(make_colour_rgb(255,160,0));
 draw_text(x,y,""+string(text));
 </string>
           </argument>

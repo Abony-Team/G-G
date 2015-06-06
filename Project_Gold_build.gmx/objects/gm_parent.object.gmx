@@ -29,6 +29,7 @@
 //global.rage_mine[global.g_mine] = instance_id;
 
 defenders = 0;
+mySoldiers = 0;
 defenders_hp = defenders * global.s_hp;
 gold = global.gold_max;
 
@@ -82,8 +83,7 @@ direction = round(random(359));
         global.a = 1;
     }
 
-global.target_array[global.a] = object_index;
-//instance_id;
+global.target_array[global.a] = id;
 </string>
           </argument>
         </arguments>
@@ -420,10 +420,11 @@ else
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if goblins_amount &lt; 1 &amp;&amp; have_mine = false {
+            <string>if goblins_amount &gt; 0 {
+    have_mine = false;
+}
+else {
     have_mine = true;
-    //alarm[2] = global.gobspawn;
-    alarm[6] = room_speed;
 }
 </string>
           </argument>
@@ -449,17 +450,20 @@ else
             <kind>1</kind>
             <string>if gold &lt;= 0 {
     my_worker = 0;
-    if defenders &gt; 0 {
-        soldier = instance_create(x,y,soldier_village);
-        defenders -= 1;
-        with (soldier) {
-           dir = 1;
-           move_towards_point(base_obj.x,base_obj.y,speed);
+    
+        if defenders &gt; 0 {
+            soldier = instance_create(x,y,soldier_village);
+            defenders -= 1;
+            global.mySoldiers -= 1;
+        
+                with (soldier) {
+                    dir = 1;
+                    move_towards_point(base_obj.x,base_obj.y,speed);
+                }
         }
-    }
-    else {
-        instance_destroy();
-    }
+        else {
+            instance_destroy();
+        }
 }
 
 defenders_hp = defenders * global.s_hp;
@@ -519,7 +523,7 @@ if instance_exists(myAxe) {
             <kind>1</kind>
             <string>if instance_exists(base_obj) {
 
-    if global.worker = 1 {
+    if global.worker = 1 &amp;&amp; have_mine = true {
 
         if click = true {
   
@@ -553,7 +557,7 @@ if instance_exists(myAxe) {
                             worker = instance_create(x,y,workers_obj);
                             worker.amount = my_worker;
                         }
-                        else if global.no_gold = false {
+                        else if global.no_gold = false &amp;&amp; my_worker &lt; 3 {
                             text = instance_create(room_width / 2,0,top_text_control);
                             text.myPapa = "Miner";
                             text.txt = "Need more gold!";
@@ -624,13 +628,16 @@ if global.miner &gt;= global.miner_max {
     
     if global.soldier = 1 {
  
-        if global.s_free &gt; 0 &amp;&amp; defenders &lt;= 3 {
+        if global.s_free &gt; 0 &amp;&amp; defenders &lt; 3 {
             global.x_finish = x;
             global.y_finish = y;
             instance_create(global.x_start,global.y_start,soldier_obj);
-            defenders += 1;
-            txt = instance_create(x,y,defender_obj);
-            txt.amount = defenders;
+            
+                if have_mine = true {
+                    defenders += 1;
+                    txt = instance_create(x,y,defender_obj);
+                    txt.amount = defenders;
+                }
             click = false;
             alarm[0] = room_speed / 2;
         }
@@ -651,15 +658,18 @@ if global.miner &gt;= global.miner_max {
                     instance_create(global.x_start,global.y_start,soldier_obj);
                     txt = instance_create(global.x_start,global.y_start,gold_minus_obj);
                     txt.gold_minus = global.soldier_price;
-                    defenders += 1;
-                    txt = instance_create(x,y,defender_obj);
-                    txt.amount = defenders;
+                        
+                        if have_mine = true {
+                            defenders += 1;
+                            txt = instance_create(x,y,defender_obj);
+                            txt.amount = defenders; 
+                        }
                     click = false;
                     alarm[0] = room_speed / 2;
                 }
                 else {
                 
-                    if global.no_gold = false {
+                    if global.no_gold = false &amp;&amp; defenders &lt; 3 {
                         text = instance_create(room_width / 2,0,top_text_control);
                         text.myPapa = "Soldier";
                         text.txt = "Need more gold!";
@@ -675,7 +685,7 @@ if global.miner &gt;= global.miner_max {
             else if nsf = true {
                 nsf = false;
                 alarm[1] = room_speed / 2;
-                //instance_create(x,y,nsf_obj);
+                instance_create(x,y,nsf_obj);
             }
         }
     }

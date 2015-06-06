@@ -2,7 +2,7 @@
 <object>
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
-  <visible>0</visible>
+  <visible>-1</visible>
   <depth>0</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
@@ -93,19 +93,25 @@ rage = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if instance_exists(goblin_obj)
-{
-  with(goblin_obj)
-  {move_towards_point(base_obj.x,base_obj.y,speed)}
+            <string>/*
+if instance_exists(goblin_obj) {
+    
+    with(goblin_obj) {
+        move_towards_point(base_obj.x,base_obj.y,speed)
+    }
 }
-if instance_exists(goldmine_obj)
-{
-  with (goldmine_obj)
-  {
-    if have_mine=false &amp;&amp; goblins_amount&gt;0 
-    {alarm[5]=room_speed}
-  }
+
+
+if instance_exists(goldmine_obj) {
+    
+    with (goldmine_obj) {
+        
+        if have_mine = false &amp;&amp; goblins_amount &gt; 0  {
+            alarm[5] = room_speed;
+        }
+    }
 }
+*/
 </string>
           </argument>
         </arguments>
@@ -128,7 +134,7 @@ if instance_exists(goldmine_obj)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.taxman=1
+            <string>global.taxman = 1;
 </string>
           </argument>
         </arguments>
@@ -162,7 +168,7 @@ if global.r_lair &lt; global.r_lair_max + round(random(1)) {
   //if spawn &lt; 1 {
   if chance &gt; 1 {
     //randomize();
-    alarm[6] = room_speed; //global.r_lair_spawn / (10 + random(5));
+    alarm[6] = room_speed;
   }
   else {
     //randomize();
@@ -181,7 +187,7 @@ if global.r_lair &lt; global.r_lair_max + round(random(1)) {
 }
 else {
     //randomize();
-    alarm[6] = room_speed; //global.r_lair_spawn - round(random(30)) + round(random(30));
+    alarm[6] = room_speed;
 }
 </string>
           </argument>
@@ -436,8 +442,33 @@ if global.gold &gt;= gold_to_win {
 
 if instance_exists(goldmine_obj) {
     global.miner = global.miner_free + instance_number(miner_obj);
-    global.s_unit = global.s_free + goldmine_obj.defenders + instance_number(soldier_obj) + instance_number(soldier_village);
+    global.s_unit = global.s_free + global.mySoldiers + instance_number(soldier_obj) + instance_number(soldier_village);
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/*
+if z = 0 { effect_create_above(ef_cloud,x,y,room_width,c_gray);}
+if z = 1 { effect_create_above(ef_rain,x,y,room_width,c_blue);}
+if z = 2 { effect_create_above(ef_snow,x,y,room_width,c_white);}
+*/
 </string>
           </argument>
         </arguments>
@@ -483,6 +514,7 @@ global.s_maxatk = 23;
 global.s_hp = 130;
 global.s_unit = 2;
 global.s_free = 2;
+global.mySoldiers = 0;
 global.s_speed = 2.93;
 global.soldier_price = 44;
 
@@ -556,6 +588,28 @@ global.tax = 0; //поставь 1, чтобы по умолчанию был в
 global.txt_speed = 2.3; //скорость улетания текста
 global.top_text = 0; //кол-во строк сверху
 
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>randomize();
+z = round(random(2));
 </string>
           </argument>
         </arguments>

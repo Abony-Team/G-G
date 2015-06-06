@@ -49,8 +49,10 @@ obj_type = "UI";
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_font(win_lose_font);
-draw_set_color(make_colour_rgb(225,215,0));
+            <string>draw_set_alpha(1);
+draw_set_font(win_lose_font);
+draw_set_halign(fa_center);
+draw_set_color(c_black);
 
 if room_get_name("room_win") {
     draw_text(view_xview + room_width / 2,view_yview + room_height / 2 - 120,"CONGRATULATION!#YOU WIN!")

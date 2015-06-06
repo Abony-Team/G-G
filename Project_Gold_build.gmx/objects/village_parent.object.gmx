@@ -286,7 +286,8 @@ if s_income = true {
 else {
     
     if income_gold = true {
-        draw_sprite(coin_spr,0,x,y);    
+        draw_sprite(coin_spr,0,x,y);
+        effect_create_above(ef_firework,x - 20,y - 20,0.0001,c_yellow);    
     }
 }
 </string>

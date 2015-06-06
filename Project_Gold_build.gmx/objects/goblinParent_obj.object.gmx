@@ -38,9 +38,7 @@ atk = true;
 x_finish = 0;
 y_finish = 0;
 vis = true;
-range = 64;
 
-//myPapa
 if collision_circle(x,y,64,r_lair_obj,true,false) {
     myPapa = "lair";
     spawn = false;
@@ -51,28 +49,27 @@ else {
 
 //for lair
 if myPapa = "lair" {
-    my_lair = collision_circle(x,y,32,r_lair_obj,true,false);
     x_plus = round(random(1));
     y_plus = round(random(1));
 
         if x_plus = 0 {
-            x_finish = my_lair.x + 49 + round(random(32));
+            x_finish = x + 49 + round(random(32));
         }
         else {
-            x_finish = my_lair.x - 49 - round(random(32));
+            x_finish = x - 49 - round(random(32));
         }
 
         if y_plus = 0 {
-            y_finish = my_lair.y + 49 + round(random(32));
+            y_finish = y + 49 + round(random(32));
         }
         else {
-            y_finish = my_lair.y - 49 - round(random(32));
+            y_finish = y - 49 - round(random(32));
         }
 
     move_towards_point(x_finish,y_finish,speed);
     direction = point_direction(x,y,x_finish,y_finish);
 }
-else { //for control
+else {
     //target
     randomize();
     var z;
@@ -80,8 +77,12 @@ else { //for control
     myTarget = global.target_array[z];
     move_towards_point(myTarget.x,myTarget.y,speed);
     direction = point_direction(x,y,myTarget.x,myTarget.y);
-    
-    if !place_empty(x,y) {
+}
+
+//for control
+//global.rage_now += 1;
+
+if !place_empty(x,y) {
     var d,step;
     step = 7;
     for (d = 0; d &gt;= 0; d += 1) {
@@ -118,7 +119,6 @@ else { //for control
         }
     }
 }
-}
 </string>
           </argument>
         </arguments>
@@ -142,10 +142,6 @@ else { //for control
           <argument>
             <kind>1</kind>
             <string>global.rage_now -= 1;
-
-if myPapa = "lair" {
-    my_lair.goblin_amount -= 1;
-}
 </string>
           </argument>
         </arguments>
@@ -191,7 +187,7 @@ if myPapa = "lair" {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>click = true;
+            <string>atk = true;
 </string>
           </argument>
         </arguments>
@@ -214,7 +210,7 @@ if myPapa = "lair" {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>atk = true;
+            <string>click = true;
 </string>
           </argument>
         </arguments>
@@ -303,7 +299,35 @@ if myPapa = "lair" {
           <argument>
             <kind>1</kind>
             <string>if myPapa = "control" {
-    searchPlayerUnit();
+    for (i = 0; i &lt; instance_count; i += 1) {
+        units = instance_id[i];
+        
+        if collision_circle(x,y,64,units,true,false) &amp;&amp; units.obj_type = "player_unit" &amp;&amp; units.vis = true {
+            myEnemy = units;
+            direction = point_direction(x,y,myEnemy.x,myEnemy.y);
+                
+                if distance_to_object(myEnemy) &gt; 1 {
+                    speed = global.g_speed;
+                    move_towards_point(myEnemy.x,myEnemy.y,speed);
+                }
+                else {
+                    speed = 0;
+                    
+                    if atk = true {
+                        myEnemy.hp -= global.g_minatk + round(random(global.g_maxatk - global.g_minatk));
+                        alarm[0] = room_speed * 1.8;
+                        atk = false;
+                        effect_create_above(ef_spark,myEnemy.x,myEnemy.y,myEnemy.sprite_width * 1.4,c_red);
+                    }
+                }
+                
+            break;
+        }
+        else {
+            speed = global.g_speed;
+            move_towards_point(myTarget.x,myTarget.y,speed);
+        }
+    }
 }
 
 if myPapa = "lair" {
@@ -317,7 +341,40 @@ if myPapa = "lair" {
         }
     }
     else {
-        searchPlayerUnit();
+        for (i = 0; i &lt; instance_count; i += 1) {
+        units = instance_id[i];
+        
+            if collision_circle(x,y,64,units,true,false) &amp;&amp; units.obj_type = "player_unit" &amp;&amp; units.vis = true {
+                myEnemy = units;
+                direction = point_direction(x,y,myEnemy.x,myEnemy.y);
+                
+                    if distance_to_object(myEnemy) &gt; 1 {
+                        speed = global.g_speed;
+                        move_towards_point(myEnemy.x,myEnemy.y,speed);
+                    }
+                    else {
+                        speed = 0;
+                    
+                        if atk = true {
+                            myEnemy.hp -= global.g_minatk + round(random(global.g_maxatk - global.g_minatk));
+                            alarm[0] = room_speed * 1.8;
+                            atk = false;
+                        }
+                    }
+            break;
+            }
+            else {
+                
+                if !x = x_finish &amp;&amp; !y = y_finish {
+                    speed = global.g_speed;
+                    move_towards_point(x_finish,y_finish,speed);
+                    direction = point_direction(x,y,x_finish,y_finish);
+                }
+                else {
+                    speed = 0;
+                }
+            }
+        }
     }
 }
 </string>
@@ -405,9 +462,9 @@ if myPapa = "lair" {
           <argument>
             <kind>1</kind>
             <string>if myPapa = "control" &amp;&amp; myTarget.obj_type = "goldmine" &amp;&amp; distance_to_object(myTarget) &lt; 1 {
-    effect_create_below(ef_flare,myTarget.x,myTarget.y,myTarget.sprite_width * 1.4,c_red);
     
     if myTarget.defenders &lt;= 0 &amp;&amp; myTarget.have_mine = true {
+        //myTarget.have_mine = false;
         myTarget.goblins_amount += 1;
         instance_destroy();
     }
@@ -456,7 +513,7 @@ if myPapa = "lair" {
             global.y_finish = y;
             instance_create(base_obj.x,base_obj.y,soldier_obj);
             click = false;
-            alarm[1] = room_speed / 2; //click alarm
+            alarm[0] = room_speed / 2; //click alarm
         }
         else {
         
@@ -468,7 +525,7 @@ if myPapa = "lair" {
                 txt = instance_create(base_obj.x,base_obj.y,gold_minus_obj);
                 txt.gold_minus = global.soldier_price;
                 click = false;
-                alarm[1] = room_speed / 2; //click alarm
+                alarm[0] = room_speed / 2; //click alarm
             }
             else if global.no_gold = false {
                 text = instance_create(room_width / 2,0,top_text_control);

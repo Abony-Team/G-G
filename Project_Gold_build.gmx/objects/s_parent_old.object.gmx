@@ -32,6 +32,7 @@ atk = true;
 obj_type = "player_unit";
 myGoblin = false;
 vis = true;
+range = 64;
 
 x_start = base_obj.x;
 y_start = base_obj.y;
@@ -40,14 +41,10 @@ y_finish = global.y_finish;
 direction = point_direction(x,y,x_finish,y_finish);
 my_target = instance_position(x_finish,y_finish,all);
 move_towards_point(my_target.x,my_target.y,speed);
-dir = 0;
+//dir = 0;
 
 if global.s_free &gt; 0 { 
     global.s_free -= 1;
-}
-
-if my_target.obj_type = "goldmine" {
-    global.s_unit -= 1;
 }
 </string>
           </argument>
@@ -94,7 +91,7 @@ if my_target.obj_type = "goldmine" {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if hp &lt; 1 {
+            <string>if hp &lt;= 0 {
     instance_destroy();
 }
 </string>
@@ -119,86 +116,121 @@ if my_target.obj_type = "goldmine" {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if !instance_exists(my_target) {
-    dir = 1;
-    my_target = base_obj;
-    speed = global.s_speed;
-    move_towards_point(my_target.x,my_target.y,speed);
-}
+            <string>if instance_exists(my_target) {
 
-if distance_to_object(my_target) &lt; 1 {
+if my_target.obj_type = "goldmine" {
     
-    if my_target.obj_type = "goldmine" {
+    if distance_to_object(my_target) &lt; 1 {
         
         if my_target.goblins_amount &gt; 0 {
             my_target.goblins_amount -= 1;
         }
+        else {
+            global.mySoldiers += 1;
+            
+            if my_target.defenders &lt; 3 {
+                my_target.defenders += 1;
+            }
+            else {
+                my_target = base_obj;
+                speed = global.s_speed;
+                move_towards_point(my_target.x,my_target.y,speed);
+                direction = point_direction(x,y,my_target.x,my_target.y);
+            }
+        }
         
         instance_destroy();
     }
+    else {
+        speed = global.s_speed;
+        move_towards_point(my_target.x,my_target.y,speed);
+        direction = point_direction(x,y,my_target.x,my_target.y);
+        searchGoblin();
+    }
+}
+
+if my_target.obj_type = "castle" {
     
-    if my_target.obj_type = "castle" {
+    if distance_to_object(my_target) &lt; 1 {
         global.s_free += 1;
         instance_destroy();
     }
+    else {
+        speed = global.s_speed;
+        move_towards_point(my_target.x,my_target.y,speed);
+        direction = point_direction(x,y,my_target.x,my_target.y);
+        searchGoblin();
+    }
+}
+
+if my_target.obj_type = "lair" {
     
-    if my_target.obj_type = "enemy" {
+    if distance_to_object(my_target) &gt; 1 {
+        searchGoblin();
+    }
+    else {
+        if !collision_circle(x,y,range,goblin_obj,true,false) {
+            my_target = base_obj;
+            speed = global.s_speed;
+            move_towards_point(my_target.x,my_target.y,speed);
+            direction = point_direction(x,y,my_target.x,my_target.y);
+        }
+        else {
+            searchGoblin();
+        }
+    }   
+}
+
+if my_target.obj_type = "enemy" {
+    direction = point_direction(x,y,my_target.x,my_target.y); //потому что объект подвижный
+    
+    if distance_to_object(my_target) &gt; 1 {
+        searchGoblin();
+    }
+    else {
         speed = 0;
-            
+                        
             if atk = true {
                 my_target.g_hp -= global.s_minatk + round(random(global.s_maxatk - global.s_minatk));
                 alarm[0] = room_speed;
                 atk = false;
-            }
-            
-            if my_target.g_hp &lt;= 0 || !instance_exists(my_enemy) {
-            
-                if collision_circle(x,y,64,goblin_obj,true,false) {
-                    my_target = instance_nearest(x,y,goblin_obj);
-                }
-                else {
-                    my_target = base_obj;
-                    speed = global.s_speed;
-                    move_towards_point(my_target.x,my_target.y,speed);
-                }
+                effect_create_below(ef_flare,my_target.x,my_target.y,my_target.sprite_width * 1.4,c_red);
             }
     }
 }
-else {
+
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>if !instance_exists(my_target) {
     
-    if !collision_circle(x,y,64,goblin_obj,true,false) {
+    if !collision_circle(x,y,range,goblin_obj,true,true) {
+        my_target = base_obj;
         speed = global.s_speed;
         move_towards_point(my_target.x,my_target.y,speed);
+        direction = point_direction(x,y,my_target.x,my_target.y);
     }
     else {
-        my_enemy = instance_nearest(x,y,goblin_obj);
-        
-            if distance_to_object(my_enemy) &gt; 1 {
-                speed = global.s_speed;
-                move_towards_point(my_enemy.x,my_enemy.y,speed);
-            }
-            else {
-                speed = 0;
-            
-                    if atk = true {
-                        my_enemy.g_hp -= global.s_minatk + round(random(global.s_maxatk - global.s_minatk));
-                        alarm[0] = room_speed;
-                        atk = false;
-                    }
-                    
-                    if my_enemy.g_hp &lt;= 0 || !instance_exists(my_enemy) {
-                        
-                        if collision_circle(x,y,64,goblin_obj,true,false) {
-                            my_enemy = instance_nearest(x,y,goblin_obj);
-                            speed = global.s_speed;
-                            move_towards_point(my_enemy.x,my_enemy.y,speed);
-                        }
-                        else {
-                            speed = global.s_speed;
-                            move_towards_point(my_taget.x,my_target.y,speed);
-                        }
-                    }
-            }
+        speed = global.s_speed;
+        searchGoblin();
     }
 }
 </string>

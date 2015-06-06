@@ -60,18 +60,9 @@
   </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
-    <scripts name="Pause System">
-      <script>scripts\pause_system_draw_shader_and_overlay.gml</script>
-      <script>scripts\pause_system_draw_ext.gml</script>
-      <script>scripts\pause_system_draw_overlay.gml</script>
-      <script>scripts\pause_system_stop.gml</script>
-      <script>scripts\pause_system_draw.gml</script>
-      <script>scripts\pause_system_start.gml</script>
-    </scripts>
+    <script>scripts\searchGoblin.gml</script>
+    <script>scripts\searchPlayerUnit.gml</script>
   </scripts>
-  <shaders name="shaders">
-    <shader type="GLSLES">shaders\shd_greyscale.shader</shader>
-  </shaders>
   <fonts name="fonts">
     <font>fonts\price_font</font>
     <font>fonts\big_pf</font>
@@ -79,16 +70,12 @@
     <font>fonts\dead_font</font>
     <font>fonts\win_lose_font</font>
     <font>fonts\menu_font</font>
-    <fonts name="Pause System">
-      <font>fonts\fnt_pause</font>
-      <font>fonts\fnt_default</font>
-    </fonts>
   </fonts>
   <objects name="objects">
     <objects name="CONTOROL">
       <object>objects\level_control</object>
       <object>objects\camera_obj</object>
-      <object>objects\newGoblin_control</object>
+      <object>objects\goblin_control</object>
     </objects>
     <objects name="Player_objs">
       <object>objects\base_obj</object>
@@ -110,11 +97,8 @@
           <object>objects\r_lair_obj</object>
         </objects>
         <objects name="enemy_objs">
-          <object>objects\goblin_parent</object>
           <object>objects\goblin_obj</object>
-          <objects name="newGoblin">
-            <object>objects\newGoblin_parent</object>
-          </objects>
+          <object>objects\goblin_parent</object>
         </objects>
       </objects>
       <objects name="Alliance_objs">
@@ -152,7 +136,6 @@
           <object>objects\gold_plus_obj</object>
           <object>objects\nsf_obj</object>
           <object>objects\full_obj</object>
-          <object>objects\escape_obj</object>
           <object>objects\dead_obj</object>
           <object>objects\defender_obj</object>
           <object>objects\workers_obj</object>
@@ -175,11 +158,6 @@
         <object>objects\timer_bar_obj</object>
       </objects>
     </objects>
-    <objects name="Pause System">
-      <object>objects\obj_demo</object>
-      <object>objects\obj_pause</object>
-      <object>objects\par_pausable</object>
-    </objects>
   </objects>
   <rooms name="rooms">
     <room>rooms\room_menu</room>
@@ -188,7 +166,6 @@
     <room>rooms\room_battlemenu</room>
     <room>rooms\room_lose</room>
     <room>rooms\room_win</room>
-    <room>rooms\room_pause</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>
