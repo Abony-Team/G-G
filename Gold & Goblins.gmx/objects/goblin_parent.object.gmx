@@ -38,6 +38,8 @@ atk = true;
 x_finish = 0;
 y_finish = 0;
 vis = true;
+range = 64;
+canSearch = true;
 
 //myPapa
 if collision_circle(x,y,64,r_lair_obj,true,false) {
@@ -72,13 +74,14 @@ if myPapa = "lair" {
     direction = point_direction(x,y,x_finish,y_finish);
 }
 else { //for control
+    //myPapa --- control
     //target
     randomize();
     var z;
     z = round(random(global.a));
-    myTarget = global.target_array[z];
-    move_towards_point(myTarget.x,myTarget.y,speed);
-    direction = point_direction(x,y,myTarget.x,myTarget.y);
+    my_target = global.target_array[z];
+    move_towards_point(my_target.x,my_target.y,speed);
+    direction = point_direction(x,y,my_target.x,my_target.y);
     
     if !place_empty(x,y) {
     var d,step;
@@ -140,11 +143,32 @@ else { //for control
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.rage_now -= 1;
-
-if myPapa = "lair" {
+            <string>if myPapa = "lair" {
     my_lair.goblin_amount -= 1;
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="3">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>canSearch = true;
 </string>
           </argument>
         </arguments>
@@ -302,34 +326,11 @@ if myPapa = "lair" {
           <argument>
             <kind>1</kind>
             <string>if myPapa = "control" {
-    for (i = 0; i &lt; instance_count; i += 1) {
-        units = instance_id[i];
-        
-        if collision_circle(x,y,64,units,true,false) &amp;&amp; units.obj_type = "player_unit" &amp;&amp; units.vis = true {
-            myEnemy = units;
-            direction = point_direction(x,y,myEnemy.x,myEnemy.y);
-                
-                if distance_to_object(myEnemy) &gt; 1 {
-                    speed = global.g_speed;
-                    move_towards_point(myEnemy.x,myEnemy.y,speed);
-                }
-                else {
-                    speed = 0;
-                    
-                    if atk = true {
-                        myEnemy.hp -= global.g_minatk + round(random(global.g_maxatk - global.g_minatk));
-                        alarm[0] = room_speed * 1.8;
-                        atk = false;
-                        effect_create_below(ef_spark,myEnemy.x,myEnemy.y,myEnemy.sprite_width * 1.4,c_red);
-                    }
-                }
-                
-            break;
-        }
-        else {
-            speed = global.g_speed;
-            move_towards_point(myTarget.x,myTarget.y,speed);
-        }
+    
+    if canSearch = true {
+        searchPlayerUnit();
+        alarm[3] = room_speed / 2;
+        canSearch = false;
     }
 }
 
@@ -342,43 +343,16 @@ if myPapa = "lair" {
             spawn = true;
             agro = false;
         }
+        else {
+            move_towards_point(x_finish,y_finish,speed);
+        }
     }
     else {
-        for (i = 0; i &lt; instance_count; i += 1) {
-        units = instance_id[i];
-        
-            if collision_circle(x,y,64,units,true,false) &amp;&amp; units.obj_type = "player_unit" &amp;&amp; units.vis = true {
-                myEnemy = units;
-                direction = point_direction(x,y,myEnemy.x,myEnemy.y);
-                
-                    if distance_to_object(myEnemy) &gt; 1 {
-                        speed = global.g_speed;
-                        move_towards_point(myEnemy.x,myEnemy.y,speed);
-                    }
-                    else {
-                        speed = 0;
-                    
-                        if atk = true {
-                            myEnemy.hp -= global.g_minatk + round(random(global.g_maxatk - global.g_minatk));
-                            alarm[0] = room_speed * 1.8;
-                            atk = false;
-                            effect_create_below(ef_spark,myEnemy.x,myEnemy.y,myEnemy.sprite_width * 1.4,c_red);
-                        }
-                    }
-            break;
-            }
-            else {
-                
-                if !x = x_finish &amp;&amp; !y = y_finish {
-                    speed = global.g_speed;
-                    move_towards_point(x_finish,y_finish,speed);
-                    direction = point_direction(x,y,x_finish,y_finish);
-                }
-                else {
-                    speed = 0;
-                }
-            }
-        }
+        if canSearch = true {
+            searchPlayerUnit();
+            alarm[3] = room_speed / 2;
+            canSearch = false;
+        }    
     }
 }
 </string>
@@ -465,24 +439,23 @@ if myPapa = "lair" {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if myPapa = "control" &amp;&amp; myTarget.obj_type = "goldmine" &amp;&amp; distance_to_object(myTarget) &lt; 1 {
-    effect_create_below(ef_flare,myTarget.x,myTarget.y,32,c_red);
+            <string>if myPapa = "control" &amp;&amp; my_target.obj_type = "goldmine" &amp;&amp; distance_to_object(my_target) &lt; 1 {
+    effect_create_below(ef_flare,my_target.x,my_target.y,32,c_red);
     
-    if myTarget.defenders &lt;= 0 &amp;&amp; myTarget.have_mine = true {
-        //myTarget.have_mine = false;
-        myTarget.goblins_amount += 1;
+    if my_target.defenders &lt;= 0 &amp;&amp; my_target.have_mine = true {
+        my_target.goblins_amount += 1;
         instance_destroy();
     }
     else {
         
-        if myTarget.defenders &gt; 0 {
-           myTarget.defenders -= 1;
+        if my_target.defenders &gt; 0 {
+           my_target.defenders -= 1;
            global.mySoldiers -= 1;
            instance_destroy(); 
         }
         
-        if myTarget.have_mine = false {
-            myTarget.goblins_amount += 1;
+        if my_target.have_mine = false {
+            my_target.goblins_amount += 1;
             instance_destroy();
         }
     }
