@@ -61,6 +61,7 @@
   <paths name="paths"/>
   <scripts name="scripts">
     <script>scripts\searchGoblin.gml</script>
+    <script>scripts\searchPlayerUnit.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\price_font</font>
